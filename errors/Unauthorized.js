@@ -1,7 +1,7 @@
-const { BaseError } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
+const CustomError = require("./CustomError");
 
-class UnauthorizedError extends BaseError {
+class UnauthorizedError extends CustomError {
   constructor(message) {
     super(message);
     this.statusCode = StatusCodes.FORBIDDEN;
