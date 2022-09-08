@@ -45,7 +45,7 @@ const UserSchema = mongoose.Schema({
   passwordToken: {
     type: String,
   },
-  passwordTokenExpiration: {
+  passwordExpiration: {
     type: Date,
   },
 });

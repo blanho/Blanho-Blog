@@ -2,8 +2,9 @@ const User = require("../models/User");
 const crypto = require("crypto");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequest, UnauthenticatedError } = require("../errors");
-const sendVerification = require("../utils/verifiedEmail");
-const { STATUS_CODES } = require("http");
+const sendMailVerification = require("../utils/verifiedEmail");
+const sendResetPassword = require("../utils/resetPassword");
+
 const createUserPayload = require("../utils/createUserPayload");
 const { attachJWTtoCookies } = require("../utils/jwt");
 const Token = require("../models/Token");
@@ -30,7 +31,7 @@ const register = async (req, res, next) => {
   });
   const origin = "http://localhost:3000";
 
-  sendVerification({
+  sendMailVerification({
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
@@ -63,7 +64,7 @@ const login = async (req, res) => {
 
   const origin = "http://localhost:3000";
   if (!user.verified) {
-    sendVerification({
+    sendMailVerification({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -118,11 +119,60 @@ const verifyEmail = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  res.send("forgotPassword");
+  const { email } = req.body;
+  if (!email) {
+    throw new BadRequest("Please provide your email");
+  }
+  const user = await User.findOne({ email });
+  if (user) {
+    const passwordToken = crypto.randomBytes(60).toString("hex");
+    const threeMins = 1000 * 60 * 5;
+    const passwordExpiration = Date.now() + threeMins;
+    const origin = "http://localhost:3000";
+
+    const { email, firstName, lastName } = user;
+
+    sendResetPassword({
+      firstName,
+      lastName,
+      email,
+      passwordVerification: passwordToken,
+      origin,
+    });
+
+    user.passwordToken = passwordToken;
+    user.passwordExpiration = passwordExpiration;
+    await user.save();
+  }
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Please check your email for resetting password " });
 };
 
 const resetPassword = async (req, res) => {
-  res.send("resetPassword");
+  const { password, email, token } = req.body;
+  if (!token || !email || !password) {
+    throw new BadRequest("Please provide all values");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const currentDate = Date.now();
+    console.log(user.passwordExpiration - currentDate);
+    if (user.passwordToken === token && user.passwordExpiration > currentDate) {
+      user.password = password;
+      user.passwordToken = null;
+      user.passwordExpiration = null;
+      await user.save();
+      return res
+        .status(StatusCodes.OK)
+        .json({ msg: "Changed password successfully" });
+    }
+  }
+  return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ msg: "Something wrong, try again" });
 };
 
 const changePassword = async (req, res) => {
@@ -133,11 +183,11 @@ const logout = async (req, res) => {
 
   res.cookie("accessToken", "logout", {
     httpOnly: true,
-    expires: new Date(Date.now()),
+    expires: Date.now(),
   });
   res.cookie("refreshToken", "logout", {
     httpOnly: true,
-    expires: new Date(Date.now()),
+    expires: Date.now(),
   });
 
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
