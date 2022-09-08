@@ -45,13 +45,8 @@ const UserSchema = mongoose.Schema({
   passwordToken: {
     type: String,
   },
-  tokenExpirationDate: {
-    passwordTokenExpiration: {
-      type: String,
-    },
-    emailTokenExpiration: {
-      type: String,
-    },
+  passwordTokenExpiration: {
+    type: Date,
   },
 });
 
@@ -60,5 +55,10 @@ UserSchema.pre("save", async function () {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+UserSchema.methods.comparePassword = async function (comparedPassword) {
+  const match = await bcrypt.compare(comparedPassword, this.password);
+  return match;
+};
 
 module.exports = mongoose.model("User", UserSchema);

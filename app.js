@@ -8,9 +8,11 @@ const connectDB = require("./db/connection");
 const authRouter = require("./routes/authRoutes");
 const ErrorHandling = require("./middleware/errors");
 const NotFound = require("./middleware/404");
+const cookieParser = require("cookie-parser");
 
 // Essential Middleware
 app.use(express.json());
+app.use(cookieParser(process.env.JWT_SECRET_KEY));
 
 // Custom Middleware
 app.use("/api/v1/auth", authRouter);
