@@ -6,7 +6,7 @@ const {
   UnauthorizedError,
 } = require("../errors");
 const User = require("../models/User");
-const checkAuthorization = require("../utils/checkAuthorization");
+const { checkAuthorization } = require("../utils/checkAuthorization");
 const createUserPayload = require("../utils/createUserPayload");
 const { attachJWTtoCookies } = require("../utils/jwt");
 
@@ -85,12 +85,10 @@ const deleteUser = async (req, res) => {
   }
 
   const deletedUser = await User.findByIdAndDelete({ _id: id });
-  res
-    .status(StatusCodes.OK)
-    .json({
-      msg: "Success! Delete user successfully",
-      deletedUser: deletedUser,
-    });
+  res.status(StatusCodes.OK).json({
+    msg: "Success! Delete user successfully",
+    deletedUser: deletedUser,
+  });
 };
 
 module.exports = {
