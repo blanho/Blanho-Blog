@@ -2,6 +2,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
+const fileUpload = require("express-fileupload");
 require("express-async-errors");
 require("dotenv").config();
 const connectDB = require("./db/connection");
@@ -18,6 +19,8 @@ const cookieParser = require("cookie-parser");
 // Essential Middleware
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET_KEY));
+app.use(fileUpload());
+app.use(express.static("./public"));
 
 // Custom Middleware
 app.use("/api/v1/auth", authRouter);

@@ -3,6 +3,7 @@ const { BadRequest, NotFound } = require("../errors");
 const Category = require("../models/Category");
 const Post = require("../models/Post");
 const { checkCustomAuthorization } = require("../utils/checkAuthorization");
+const path = require("path");
 
 const getAllPosts = async (req, res) => {
   const post = await Post.find({}).select("-category -user");
@@ -10,7 +11,7 @@ const getAllPosts = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-  const { title, description, categoryId } = req.body;
+  const { title, description, categoryId, image } = req.body;
   if (!title || !description || !categoryId) {
     throw new BadRequest("Please provide all values");
   }
@@ -23,6 +24,7 @@ const createPost = async (req, res) => {
     description,
     user: req.user.userId,
     category: categoryId,
+    image,
   });
   res.status(StatusCodes.CREATED).json({ msg: "Create Successfully", post });
 };
@@ -79,7 +81,23 @@ const updatePost = async (req, res) => {
 };
 
 const uploadImage = async (req, res) => {
-  res.send("upload image");
+  if (!req.files) {
+    throw new BadRequest("No file uploaded");
+  }
+  const postImage = req.files.image;
+  if (!postImage.mimetype.startsWith("image")) {
+    throw new BadRequest("Please upload your image");
+  }
+  const maxSize = 1024 * 1024;
+  if (postImage.size > maxSize) {
+    throw new BadRequest("Please upload image smaller than 1MB");
+  }
+  const imagePath = path.join(
+    __dirname,
+    "../public/uploads/" + `${postImage.name}`
+  );
+  await postImage.mv(imagePath);
+  res.status(StatusCodes.OK).json({ image: `/uploads/${postImage.name}` });
 };
 
 module.exports = {
