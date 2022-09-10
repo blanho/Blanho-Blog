@@ -5,9 +5,11 @@ const app = express();
 require("express-async-errors");
 require("dotenv").config();
 const connectDB = require("./db/connection");
+
 const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
 const categoryRouter = require("./routes/categoryRoutes");
+const postRouter = require("./routes/postRoutes");
 
 const ErrorHandling = require("./middleware/errors");
 const NotFound = require("./middleware/404");
@@ -21,6 +23,7 @@ app.use(cookieParser(process.env.JWT_SECRET_KEY));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/category", categoryRouter);
+app.use("/api/v1/post", postRouter);
 
 // Error Handling
 app.use(ErrorHandling);
