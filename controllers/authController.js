@@ -126,8 +126,8 @@ const forgotPassword = async (req, res) => {
   const user = await User.findOne({ email });
   if (user) {
     const passwordToken = crypto.randomBytes(60).toString("hex");
-    const threeMins = 1000 * 60 * 5;
-    const passwordExpiration = Date.now() + threeMins;
+    const fiveMins = 1000 * 60 * 5;
+    const passwordExpiration = new Date(Date.now() + fiveMins);
     const origin = "http://localhost:3000";
 
     const { email, firstName, lastName } = user;
@@ -158,8 +158,8 @@ const resetPassword = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user) {
-    const currentDate = Date.now();
-    console.log(user.passwordExpiration - currentDate);
+    const currentDate = new Date(Date.now());
+
     if (user.passwordToken === token && user.passwordExpiration > currentDate) {
       user.password = password;
       user.passwordToken = null;
@@ -175,19 +175,37 @@ const resetPassword = async (req, res) => {
     .json({ msg: "Something wrong, try again" });
 };
 
-const changePassword = async (req, res) => {
-  res.send("changePassword");
-};
+// const changePassword = async (req, res) => {
+//   const { oldPassword, newPassword, confirmedPassword } = req.body;
+
+//   if (!oldPassword || !newPassword || !confirmedPassword) {
+//     throw new BadRequest("Please provide all values");
+//   }
+//   const user = await User.findOne({ _id: req.user.userId });
+//   console.log(user);
+//   if (!user.comparePassword(oldPassword)) {
+//     throw new UnauthenticatedError("Please provide an valid password");
+//   }
+//   if (newPassword !== confirmedPassword) {
+//     throw new BadRequest("Please provide an valid password");
+//   }
+//   user.password = newPassword;
+//   await user.save();
+
+//   return res
+//     .status(StatusCodes.OK)
+//     .json({ msg: "Update Password Successfully" });
+// };
 const logout = async (req, res) => {
   await Token.findOneAndDelete({ user: req.user.userId });
 
   res.cookie("accessToken", "logout", {
     httpOnly: true,
-    expires: Date.now(),
+    expires: new Date(Date.now()),
   });
   res.cookie("refreshToken", "logout", {
     httpOnly: true,
-    expires: Date.now(),
+    expires: new Date(Date.now()),
   });
 
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
@@ -195,7 +213,6 @@ const logout = async (req, res) => {
 
 module.exports = {
   register,
-  changePassword,
   forgotPassword,
   login,
   logout,

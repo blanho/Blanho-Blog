@@ -16,12 +16,13 @@ const authenticatedUser = async (req, res, next) => {
         refreshToken: payload.refreshToken,
         user: payload.user.userId,
       });
+
       if (!existingToken || !existingToken?.isValid) {
         throw new UnauthenticatedError("Invalid Authentication");
       }
       attachJWTtoCookies({
         res,
-        userToken: payload.user,
+        userPayload: payload.user,
         refreshToken: existingToken.refreshToken,
       });
       req.user = payload.user;

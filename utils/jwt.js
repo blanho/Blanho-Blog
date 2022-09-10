@@ -15,7 +15,6 @@ const attachJWTtoCookies = ({ res, userPayload, refreshToken }) => {
   const thirtyMins = 1000 * 60 * 30;
   const oneMonth = 1000 * 60 * 60 * 24 * 30;
 
-  console.log(res.cookie);
   res.cookie("accessToken", accessTokenJWT, {
     httpOnly: true,
     signed: true,

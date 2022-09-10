@@ -6,6 +6,7 @@ require("express-async-errors");
 require("dotenv").config();
 const connectDB = require("./db/connection");
 const authRouter = require("./routes/authRoutes");
+const userRouter = require("./routes/userRoutes");
 const ErrorHandling = require("./middleware/errors");
 const NotFound = require("./middleware/404");
 const cookieParser = require("cookie-parser");
@@ -16,10 +17,11 @@ app.use(cookieParser(process.env.JWT_SECRET_KEY));
 
 // Custom Middleware
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/user", userRouter);
 
 // Error Handling
-app.use(NotFound);
 app.use(ErrorHandling);
+app.use(NotFound);
 
 const port = 5000 || process.env.PORT;
 const startServer = async () => {
