@@ -10,7 +10,6 @@ const {
   deleteUser,
 } = require("../controllers/userController");
 const authenticatedUser = require("../middleware/authentication");
-
 const authorizePermissions = require("../middleware/authorization");
 
 router.get("/", authenticatedUser, authorizePermissions("admin"), getAllUsers);

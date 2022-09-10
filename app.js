@@ -7,6 +7,8 @@ require("dotenv").config();
 const connectDB = require("./db/connection");
 const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
+const categoryRouter = require("./routes/categoryRoutes");
+
 const ErrorHandling = require("./middleware/errors");
 const NotFound = require("./middleware/404");
 const cookieParser = require("cookie-parser");
@@ -18,6 +20,7 @@ app.use(cookieParser(process.env.JWT_SECRET_KEY));
 // Custom Middleware
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/category", categoryRouter);
 
 // Error Handling
 app.use(ErrorHandling);
