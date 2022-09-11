@@ -32,7 +32,9 @@ const createPost = async (req, res) => {
 const getSinglePost = async (req, res) => {
   const { id: postId } = req.params;
 
-  const post = await Post.findOne({ _id: postId }).select("-category -user");
+  const post = await Post.findOne({ _id: postId })
+    .populate("comments")
+    .select("-category -user");
   if (!post) {
     throw new NotFound(`No user with id: ${postId} found`);
   }

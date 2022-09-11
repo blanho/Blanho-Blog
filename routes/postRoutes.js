@@ -1,4 +1,5 @@
 const express = require("express");
+const { getSinglePostComments } = require("../controllers/commentController");
 const router = express.Router();
 
 const {
@@ -24,5 +25,7 @@ router
   .patch(authenticatedUser, updatePost);
 
 router.post("/uploadImage", authenticatedUser, uploadImage);
+
+router.get("/:id/comments", authenticatedUser, getSinglePostComments);
 
 module.exports = router;

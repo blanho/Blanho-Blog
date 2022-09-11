@@ -175,27 +175,6 @@ const resetPassword = async (req, res) => {
     .json({ msg: "Something wrong, try again" });
 };
 
-// const changePassword = async (req, res) => {
-//   const { oldPassword, newPassword, confirmedPassword } = req.body;
-
-//   if (!oldPassword || !newPassword || !confirmedPassword) {
-//     throw new BadRequest("Please provide all values");
-//   }
-//   const user = await User.findOne({ _id: req.user.userId });
-//   console.log(user);
-//   if (!user.comparePassword(oldPassword)) {
-//     throw new UnauthenticatedError("Please provide an valid password");
-//   }
-//   if (newPassword !== confirmedPassword) {
-//     throw new BadRequest("Please provide an valid password");
-//   }
-//   user.password = newPassword;
-//   await user.save();
-
-//   return res
-//     .status(StatusCodes.OK)
-//     .json({ msg: "Update Password Successfully" });
-// };
 const logout = async (req, res) => {
   await Token.findOneAndDelete({ user: req.user.userId });
 
