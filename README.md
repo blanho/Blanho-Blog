@@ -107,6 +107,10 @@ All the models can be found in the models directory using Mongoose
 - userAgent(String)
 - isValid(Boolean)
 
+## Comment
+
+- comment(String)
+
 ## License
 
 - [![License](https://img.shields.io/:License-MIT-blue.svg?style=flat-square)](https://www.linkedin.com/in/blanho/)
