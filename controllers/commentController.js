@@ -2,7 +2,6 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequest, NotFound } = require("../errors");
 const Comment = require("../models/Comment");
 const Post = require("../models/Post");
-const { post } = require("../routes/postRoutes");
 const { checkCustomAuthorization } = require("../utils/checkAuthorization");
 
 const createComment = async (req, res) => {
@@ -49,6 +48,7 @@ const updateComment = async (req, res) => {
   }
 
   checkCustomAuthorization(req.user, postComment);
+
   postComment.comment = comment;
   await postComment.save();
 

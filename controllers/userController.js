@@ -31,13 +31,14 @@ const updateUser = async (req, res) => {
   if (!firstName || !lastName) {
     throw new BadRequest("Please provide all values");
   }
-  const user = await User.findOne({ _id: req.user.userId });
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.userId },
+    { ...req.body },
+    { new: true, runValidators: true }
+  );
   if (!user) {
     throw new UnauthorizedError("You don't have permission to access");
   }
-
-  user.firstName = firstName;
-  user.lastName = lastName;
 
   await user.save();
 
@@ -84,10 +85,10 @@ const deleteUser = async (req, res) => {
     throw new NotFound(`No user with id: ${id} found`);
   }
 
-  const deletedUser = await User.findByIdAndDelete({ _id: id });
+  await user.remove();
+
   res.status(StatusCodes.OK).json({
     msg: "Success! Delete user successfully",
-    deletedUser: deletedUser,
   });
 };
 

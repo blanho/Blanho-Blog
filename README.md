@@ -106,3 +106,9 @@ All the models can be found in the models directory using Mongoose
 - ip(String)
 - userAgent(String)
 - isValid(Boolean)
+
+## License
+
+- [![License](https://img.shields.io/:License-MIT-blue.svg?style=flat-square)](https://www.linkedin.com/in/blanho/)
+
+- Copyright 2022 © [Hồ Bảo Lân](https://github.com/blanho)

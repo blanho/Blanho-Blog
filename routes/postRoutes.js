@@ -7,7 +7,6 @@ const {
   deletePost,
   getAllPosts,
   getSinglePost,
-  uploadImage,
   updatePost,
 } = require("../controllers/postController");
 
@@ -23,8 +22,6 @@ router
   .get(authenticatedUser, getSinglePost)
   .delete(authenticatedUser, deletePost)
   .patch(authenticatedUser, updatePost);
-
-router.post("/uploadImage", authenticatedUser, uploadImage);
 
 router.get("/:id/comments", authenticatedUser, getSinglePostComments);
 

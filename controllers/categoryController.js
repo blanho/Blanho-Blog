@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
-const { BadRequest, NotFound } = require("../errors");
+const { BadRequest, NotFound, UnauthorizedError } = require("../errors");
 const Category = require("../models/Category");
+const Post = require("../models/Post");
 
 const createCategory = async (req, res) => {
   const { name } = req.body;
@@ -45,11 +46,14 @@ const deleteCategory = async (req, res) => {
     throw new NotFound(`Cannot found this id: ${categoryId}`);
   }
 
+  const categoryInPosts = await Post.findOne({ category: categoryId });
+  if (categoryInPosts) {
+    throw new UnauthorizedError("Cannot delete this post");
+  }
+
   await category.remove();
 
-  res
-    .status(StatusCodes.OK)
-    .json({ msg: "Deleted category successfully", category });
+  res.status(StatusCodes.OK).json({ msg: "Deleted category successfully" });
 };
 
 module.exports = {

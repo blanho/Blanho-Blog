@@ -3,7 +3,6 @@ const { BadRequest, NotFound } = require("../errors");
 const Category = require("../models/Category");
 const Post = require("../models/Post");
 const { checkCustomAuthorization } = require("../utils/checkAuthorization");
-const path = require("path");
 
 const getAllPosts = async (req, res) => {
   const post = await Post.find({}).select("-category -user");
@@ -82,31 +81,10 @@ const updatePost = async (req, res) => {
     .json({ msg: "Updated category successfully", post });
 };
 
-const uploadImage = async (req, res) => {
-  if (!req.files) {
-    throw new BadRequest("No file uploaded");
-  }
-  const postImage = req.files.image;
-  if (!postImage.mimetype.startsWith("image")) {
-    throw new BadRequest("Please upload your image");
-  }
-  const maxSize = 1024 * 1024;
-  if (postImage.size > maxSize) {
-    throw new BadRequest("Please upload image smaller than 1MB");
-  }
-  const imagePath = path.join(
-    __dirname,
-    "../public/uploads/" + `${postImage.name}`
-  );
-  await postImage.mv(imagePath);
-  res.status(StatusCodes.OK).json({ image: `/uploads/${postImage.name}` });
-};
-
 module.exports = {
   getAllPosts,
   createPost,
   getSinglePost,
   deletePost,
-  uploadImage,
   updatePost,
 };
